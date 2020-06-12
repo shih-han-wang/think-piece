@@ -1,53 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { auth, firestore } from "../firebase";
 
-import Posts from './Posts';
+import Posts from "./Posts";
+import Authentication from "./Authentication";
+import { collectIdsAndDocs } from "../utilities";
 
 class Application extends Component {
   state = {
-    posts: [
-      {
-        id: '1',
-        title: 'A Very Hot Take',
-        content:
-          'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perferendis suscipit repellendus modi unde cumque, fugit in ad necessitatibus eos sed quasi et! Commodi repudiandae tempora ipsum fugiat. Quam, officia excepturi!',
-        user: {
-          uid: '123',
-          displayName: 'Bill Murray',
-          email: 'billmurray@mailinator.com',
-          photoURL: 'https://www.fillmurray.com/300/300',
-        },
-        stars: 1,
-        comments: 47,
-      },
-      {
-        id: '2',
-        title: 'The Sauciest of Opinions',
-        content:
-          'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perferendis suscipit repellendus modi unde cumque, fugit in ad necessitatibus eos sed quasi et! Commodi repudiandae tempora ipsum fugiat. Quam, officia excepturi!',
-        user: {
-          uid: '456',
-          displayName: 'Mill Burray',
-          email: 'notbillmurray@mailinator.com',
-          photoURL: 'https://www.fillmurray.com/400/400',
-        },
-        stars: 3,
-        comments: 0,
-      },
-    ],
+    posts: [],
+    user: null,
   };
 
-  handleCreate = post => {
-    const { posts } = this.state;
-    this.setState({ posts: [post, ...posts] });
+  unsubscribeFromFirestore = null;
+  unsubscribeFromAuth = null;
+
+  componentDidMount = async () => {
+    this.unsubscribeFromFirestore = firestore.collection("posts").onSnapshot((snapshot) => {
+      const posts = snapshot.docs.map(collectIdsAndDocs);
+      this.setState({ posts });
+    });
+
+    this.unsubscribeFromAuth = auth.onAuthStateChanged((user) => {
+      this.setState({ user });
+    });
+  };
+
+  componentWillUnMount = () => {
+    this.unsubscribeFromFirestore();
+    this.unsubscribeFromAuth();
   };
 
   render() {
-    const { posts } = this.state;
+    const { posts, user } = this.state;
 
     return (
       <main className="Application">
-        <h1>Think Piece</h1>
-        <Posts posts={posts} onCreate={this.handleCreate} />
+        <Authentication user={user} />
+        <h1> Think Piece </h1>
+        <Posts posts={posts} />
       </main>
     );
   }

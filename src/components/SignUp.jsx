@@ -1,18 +1,28 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { auth } from "../firebase";
 
 class SignUp extends Component {
-  state = { displayName: '', email: '', password: '' };
+  state = { displayName: "", email: "", password: "" };
 
-  handleChange = event => {
+  handleChange = (event) => {
     const { name, value } = event.target;
 
     this.setState({ [name]: value });
   };
 
-  handleSubmit = event => {
+  handleSubmit = async (event) => {
     event.preventDefault();
 
-    this.setState({ displayName: '', email: '', password: '' });
+    const { displayName, email, password } = this.state;
+
+    try {
+      const { user } = await auth.createUserWithEmailAndPassword(email, password);
+      user.updateProfile({ displayName });
+    } catch (error) {
+      console.error(error);
+    }
+
+    this.setState({ displayName: "", email: "", password: "" });
   };
 
   render() {
@@ -28,20 +38,8 @@ class SignUp extends Component {
           value={displayName}
           onChange={this.handleChange}
         />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={this.handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={password}
-          onChange={this.handleChange}
-        />
+        <input type="email" name="email" placeholder="Email" value={email} onChange={this.handleChange} />
+        <input type="password" name="password" placeholder="Password" value={password} onChange={this.handleChange} />
         <input type="submit" value="Sign Up" />
       </form>
     );
