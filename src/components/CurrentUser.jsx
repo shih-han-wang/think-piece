@@ -1,27 +1,24 @@
 import React from "react";
 
 import moment from "moment";
-import { auth } from "../firebase";
+import { signOut } from "../firebase";
 
-const CurrentUser = ({ displayName, photoURL, email, createdAt, children }) => {
-  const onSignOut = () => auth.signOut();
-  return (
-    <section className="CurrentUser">
-      <div className="CurrentUser--profile">
-        {photoURL && <img src={photoURL} alt={displayName} />}
-        <div className="CurrentUser--information">
-          <h2>{displayName}</h2>
-          <p className="email">{email}</p>
-          <p className="created-at">{moment(createdAt).calendar()}</p>
-        </div>
+const CurrentUser = ({ displayName, photoURL, email, createdAt, children }) => (
+  <section className="CurrentUser">
+    <div className="CurrentUser--profile">
+      {photoURL && <img src={photoURL} alt={displayName} />}
+      <div className="CurrentUser--information">
+        <h2>{displayName}</h2>
+        <p className="email">{email}</p>
+        <p className="created-at">{moment(createdAt).calendar()}</p>
       </div>
-      <div>
-        <div>{children}</div>
-        <button onClick={onSignOut}>Sign Out</button>
-      </div>
-    </section>
-  );
-};
+    </div>
+    <div>
+      <div>{children}</div>
+      <button onClick={signOut}>Sign Out</button>
+    </div>
+  </section>
+);
 
 CurrentUser.defaultProps = {
   displayName: "Bill Murray",
