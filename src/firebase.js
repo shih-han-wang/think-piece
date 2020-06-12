@@ -33,7 +33,7 @@ const createUserProfileDoc = async (user, additionalData) => {
   const snapshot = await userRef.get();
   if (!snapshot.exists) {
     const { displayName, email, photoURL } = user;
-    const createdAt = new Date();
+    const createdAt = Date.now();
     try {
       await userRef.set({
         displayName,
