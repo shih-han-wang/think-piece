@@ -2,7 +2,7 @@ import React, { Component, createContext } from "react";
 import { firestore } from "../firebase";
 import { collectIdsAndDocs } from "../utilities";
 
-export const PostsContext = createContext();
+const PostsContext = createContext();
 
 class PostsProvider extends Component {
   state = {
@@ -29,4 +29,5 @@ class PostsProvider extends Component {
   }
 }
 
+export { PostsContext };
 export default PostsProvider;
